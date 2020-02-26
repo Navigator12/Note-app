@@ -45,17 +45,24 @@ router.post(
 router.delete(
   '/delete',
   async (req, res) => {
-    const {_id} = req.body
+    try {
+      const {_id} = req.body
 
-    const id = new ObjectId(_id)
+      const id = new ObjectId(_id)
 
-    const candidate = await Note.findOne({_id: id})
+      const candidate = await Note.findOne({_id: id})
 
-    if (candidate) {
-      await candidate.delete()
+      if (candidate) {
+        await candidate.delete()
+      } else {
+        res.status(400).json({message: "Note isn't exist"})
+      }
+
+      res.json({message: 'Note has been deleted', _id})
+
+    } catch (e) {
+      res.status(500).json({message: 'Something goes wrong, try again'})
     }
-
-    res.json({message: 'Note has been deleted', _id})
   }
 )
 
